@@ -104,7 +104,7 @@ Secure your site with HTTPS. It's a ranking factor and builds trust with visitor
 
 Create valuable content that answers your customers' questions. Blog posts, guides, and FAQs help establish authority and attract organic traffic.
     `,
-    excerpt: 'SEO doesn't have to be complicated. This comprehensive guide covers everything small businesses in India need to know about ranking higher on Google.',
+    excerpt: `SEO doesn't have to be complicated. This comprehensive guide covers everything small businesses in India need to know about ranking higher on Google.`,
     tags: ['SEO', 'Digital Marketing', 'Small Business'],
     coverImage: '/placeholder-blog.svg',
     publishedAt: '2024-03-10',
@@ -164,7 +164,7 @@ Design navigation elements that are easy to tap with a finger.
 
 If your website isn't responsive, it's time for an upgrade. Modern frameworks like Tailwind CSS make responsive design easier than ever.
     `,
-    excerpt: 'With mobile traffic accounting for over 60% of web visits, having a responsive website is no longer optional. Here's why it matters for your business.',
+    excerpt: `With mobile traffic accounting for over 60% of web visits, having a responsive website is no longer optional. Here's why it matters for your business.`,
     tags: ['Web Design', 'Mobile', 'UX'],
     coverImage: '/placeholder-blog.svg',
     publishedAt: '2024-03-05',
