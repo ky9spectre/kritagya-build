@@ -29,12 +29,12 @@ export async function GET() {
       leads: {
         total: totalLeads,
         byStatus: Object.fromEntries(
-          leadCounts.map((item) => [item.status, item._count.status])
+          leadCounts.map((item: { status: string; _count: { status: number } }) => [item.status, item._count.status])
         ),
       },
       contacts: {
         total: totalContacts,
-        unread: contactCount.find((c) => !c.read)?._count.read || 0,
+        unread: contactCount.find((c: { read: boolean; _count: { read: number } }) => !c.read)?._count.read || 0,
       },
     };
 

@@ -1,7 +1,13 @@
 import { Resend } from 'resend';
 import { env } from './env';
 
-const resend = new Resend(env.RESEND_API_KEY);
+function getResend(): Resend {
+  const apiKey = env.RESEND_API_KEY;
+  if (!apiKey) {
+    throw new Error('RESEND_API_KEY is not configured');
+  }
+  return new Resend(apiKey);
+}
 
 export async function sendContactEmail(data: {
   name: string;
@@ -10,6 +16,7 @@ export async function sendContactEmail(data: {
   budget?: string;
   message: string;
 }): Promise<void> {
+  const resend = getResend();
   await resend.emails.send({
     from: 'Contact Form <contact@yourdomain.com>',
     to: ['hello@yourdomain.com'],
@@ -32,6 +39,7 @@ export async function sendLeadNotification(data: {
   phone?: string;
   budget?: string;
 }): Promise<void> {
+  const resend = getResend();
   await resend.emails.send({
     from: 'Leads <leads@yourdomain.com>',
     to: ['sales@yourdomain.com'],
@@ -47,6 +55,7 @@ export async function sendLeadNotification(data: {
 }
 
 export async function sendConfirmationEmail(email: string, name: string): Promise<void> {
+  const resend = getResend();
   await resend.emails.send({
     from: 'Agency <noreply@yourdomain.com>',
     to: [email],

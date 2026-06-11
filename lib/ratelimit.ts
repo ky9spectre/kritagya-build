@@ -2,31 +2,41 @@ import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
 import { env } from './env';
 
-const redis = new Redis({
-  url: env.UPSTASH_REDIS_REST_URL,
-  token: env.UPSTASH_REDIS_REST_TOKEN,
-});
+function getRedis(): Redis {
+  const url = env.UPSTASH_REDIS_REST_URL;
+  const token = env.UPSTASH_REDIS_REST_TOKEN;
+  if (!url || !token) {
+    throw new Error('Upstash Redis is not configured');
+  }
+  return new Redis({ url, token });
+}
 
-export const contactRateLimit = new Ratelimit({
-  redis,
-  limiter: Ratelimit.slidingWindow(3, '1 h'),
-  analytics: true,
-  prefix: 'ratelimit:contact',
-});
+function getContactRateLimit(): Ratelimit {
+  return new Ratelimit({
+    redis: getRedis(),
+    limiter: Ratelimit.slidingWindow(3, '1 h'),
+    analytics: true,
+    prefix: 'ratelimit:contact',
+  });
+}
 
-export const loginRateLimit = new Ratelimit({
-  redis,
-  limiter: Ratelimit.slidingWindow(5, '15 m'),
-  analytics: true,
-  prefix: 'ratelimit:login',
-});
+function getLoginRateLimit(): Ratelimit {
+  return new Ratelimit({
+    redis: getRedis(),
+    limiter: Ratelimit.slidingWindow(5, '15 m'),
+    analytics: true,
+    prefix: 'ratelimit:login',
+  });
+}
 
-export const apiRateLimit = new Ratelimit({
-  redis,
-  limiter: Ratelimit.slidingWindow(100, '1 m'),
-  analytics: true,
-  prefix: 'ratelimit:api',
-});
+function getApiRateLimit(): Ratelimit {
+  return new Ratelimit({
+    redis: getRedis(),
+    limiter: Ratelimit.slidingWindow(100, '1 m'),
+    analytics: true,
+    prefix: 'ratelimit:api',
+  });
+}
 
 export async function checkRateLimit(
   rateLimit: Ratelimit,
@@ -42,6 +52,7 @@ export async function checkRateLimit(
 }
 
 export async function incrementFailedLogin(email: string): Promise<number> {
+  const redis = getRedis();
   const key = `login:failed:${email}`;
   const count = await redis.incr(key);
   if (count === 1) {
@@ -51,14 +62,28 @@ export async function incrementFailedLogin(email: string): Promise<number> {
 }
 
 export async function resetFailedLogin(email: string): Promise<void> {
+  const redis = getRedis();
   await redis.del(`login:failed:${email}`);
 }
 
 export async function isLockedOut(email: string): Promise<boolean> {
+  const redis = getRedis();
   const count = await redis.get(`login:failed:${email}`);
   return (count as number) >= 5;
 }
 
 export async function lockoutUser(email: string): Promise<void> {
+  const redis = getRedis();
   await redis.set(`login:lockout:${email}`, '1', { ex: 15 * 60 });
+}
+
+export function getRateLimiter(type: 'contact' | 'login' | 'api'): Ratelimit {
+  switch (type) {
+    case 'contact':
+      return getContactRateLimit();
+    case 'login':
+      return getLoginRateLimit();
+    case 'api':
+      return getApiRateLimit();
+  }
 }

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { contactSchema } from '@/lib/validations';
 import { db } from '@/lib/db';
-import { checkRateLimit, contactRateLimit } from '@/lib/ratelimit';
+import { checkRateLimit, getRateLimiter } from '@/lib/ratelimit';
 import { sendContactEmail, sendConfirmationEmail } from '@/lib/email';
 import { verifyRecaptcha } from '@/lib/recaptcha';
 
@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     }
 
     const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
-    const rateLimitResult = await checkRateLimit(contactRateLimit, ip);
+    const rateLimitResult = await checkRateLimit(getRateLimiter('contact'), ip);
     if (!rateLimitResult.success) {
       return NextResponse.json(
         { error: 'Too many requests. Please try again later.' },

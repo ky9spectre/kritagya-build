@@ -100,7 +100,7 @@ export function OrganizationJsonLd() {
     <Script
       id="json-ld-organization"
       type="application/ld+json"
-      strategy="beforeInteractive"
+      strategy="afterInteractive"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
     />
   );
@@ -111,7 +111,7 @@ export function LocalBusinessJsonLd() {
     <Script
       id="json-ld-local-business"
       type="application/ld+json"
-      strategy="beforeInteractive"
+      strategy="afterInteractive"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }}
     />
   );
@@ -122,7 +122,7 @@ export function ServiceJsonLd() {
     <Script
       id="json-ld-service"
       type="application/ld+json"
-      strategy="beforeInteractive"
+      strategy="afterInteractive"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }}
     />
   );
